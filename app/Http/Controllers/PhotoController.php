@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Photo;
+use App\Models\Jobs;
 
 class PhotoController extends Controller
 {
@@ -12,7 +13,7 @@ class PhotoController extends Controller
      */
     public function index()
     {
-        $photos = Photo::where('is_deleted', 0)->orderBy('id', 'desc')->get();
+        $photos = Photo::with('job')->where('is_deleted', 0)->orderBy('id', 'desc')->get();
         return view('photos.all_photos', compact('photos'));
     }
 
@@ -21,7 +22,8 @@ class PhotoController extends Controller
      */
     public function create()
     {
-        return view('photos.create');
+        $jobs = Jobs::where('is_deleted', 0)->get();
+        return view('photos.create',compact('jobs'));
     }
 
     /**
@@ -31,7 +33,8 @@ class PhotoController extends Controller
     {
         $request->validate([
             'title' => 'required|string',
-            'image_name' => 'required|image|mimes:jpg,png,jpeg,gif,webp|max:2048',
+            'image_name' => 'required|image|mimes:jpg,png,jpeg,gif,webp',
+            'job_id' => 'required|exists:jobs,id',
         ]);
 
         // Save photo
@@ -42,6 +45,8 @@ class PhotoController extends Controller
             Photo::create([
                 'title' => $request->title,
                 'image_name' => $imageName,
+                'job_id' => $request->job_id,
+                'added_date' => now(),
             ]);
         }
 
@@ -61,7 +66,8 @@ class PhotoController extends Controller
      */
     public function edit(Photo $photo)
     {
-        return view('photos.edit_photo', compact('photo'));
+        $jobs = Jobs::where('is_deleted', 0)->get();
+        return view('photos.edit_photo', compact('photo','jobs'));
     }
 
     /**
@@ -72,6 +78,7 @@ class PhotoController extends Controller
         $request->validate([
             'title' => 'required|string|max:255',
             'image_name' => 'nullable|image|mimes:jpg,png,jpeg,gif,webp|max:2048',
+            'job_id' => 'required|exists:jobs,id',
         ]);
 
         if ($request->hasFile('image_name')) {
@@ -81,6 +88,7 @@ class PhotoController extends Controller
         }
 
         $photo->title = $request->title;
+        $photo->job_id = $request->job_id;
         $photo->save();
 
         return redirect()->route('photos.index')->with('success', 'Photo Updated Successfully!');

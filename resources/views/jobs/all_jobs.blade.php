@@ -6,9 +6,9 @@
 
     <!-- Success Message -->
     @if(session('success'))
-        <div class="alert alert-success">
-            {{ session('success') }}
-        </div>
+    <div class="alert alert-success">
+        {{ session('success') }}
+    </div>
     @endif
 
     <a href="{{ url('/add_job') }}" class="btn btn-primary mb-3">Add New Job</a>
@@ -19,6 +19,7 @@
                 <th>ID</th>
                 <th>Title</th>
                 <th>Description</th>
+                <th>Photos</th>
                 <th>Location</th>
                 <th>Last Date</th>
                 <th>Added Date</th>
@@ -32,6 +33,10 @@
                 <td>{{ $job->id }}</td>
                 <td>{{ $job->title }}</td>
                 <td>{{ $job->description }}</td>
+                <td>@foreach($job->photos as $photo)
+                    <img src="{{ asset('images/'.$photo->image_name) }}" width="100">
+                    @endforeach
+                </td>
                 <td>{{ $job->location }}</td>
                 <td>{{ $job->last_date }}</td>
                 <td>{{ $job->added_date }}</td>

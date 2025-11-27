@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PhotoController;
 use App\Http\Controllers\JobsController;
+use App\Http\Controllers\FormController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -27,3 +28,5 @@ Route::post('/add_job', [JobsController::class, 'add_job']);
 Route::get('/edit_job/{id}', [JobsController::class, 'edit_job']);
 Route::put('/update_job/{id}', [JobsController::class, 'update_job']);
 Route::delete('/delete_job/{id}', [JobsController::class, 'delete_job']);
+
+Route::get('/basic_form', [FormController::class, 'new_basic_form']);

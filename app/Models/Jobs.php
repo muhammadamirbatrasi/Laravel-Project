@@ -20,5 +20,8 @@ class Jobs extends Model
         'updated_date'
     ];
 
-    
+    public function photos()
+    {
+        return $this->hasMany(Photo::class, 'job_id');
+    }
 }

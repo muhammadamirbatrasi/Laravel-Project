@@ -9,7 +9,10 @@ class JobsController extends Controller
 {
     public function all_jobs()
     {
-        $jobs = Jobs::where('is_deleted', 0)->orderBy('id', 'desc')->get();
+        $jobs = Jobs::with('photos')
+            ->where('is_deleted', 0)
+            ->orderBy('id', 'desc')
+            ->get();
         return view('jobs.all_jobs',compact('jobs'));
     }
     public function add_job_form()
@@ -19,11 +22,19 @@ class JobsController extends Controller
     public function add_job(Request $request)
     {
         $request->validate([
-            'title'       => 'required|string',
+            'title'       => 'required|string|unique:jobs,title',
             'description' => 'nullable|string',
             'location'    => 'nullable|string',
             'last_date'   => 'nullable|date'
         ]);
+
+        $exists = Jobs::where('title', $request->title)
+            ->where('is_deleted', 0)  // optional if you want active titles only
+            ->first();
+
+        if ($exists) {
+            return redirect()->back()->with('error', 'Job title already exists!');
+        }
 
         Jobs::create([
             'title'        => $request->title,
@@ -48,7 +59,7 @@ class JobsController extends Controller
     {
         // Validation
         $request->validate([
-            'title'       => 'required|string',
+            'title'       => 'required|string|unique:jobs,title,' . $id,
             'description' => 'required|string',
             'location'    => 'nullable|string',
             'last_date'   => 'nullable|date'

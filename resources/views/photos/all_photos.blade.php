@@ -16,6 +16,7 @@
                 <th>ID</th>
                 <th>Title</th>
                 <th>Image</th>
+                <th>Job Title</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -27,6 +28,7 @@
                     <td>
                         <img src="{{ asset('images/'.$photo->image_name) }}" alt="{{ $photo->title }}" width="80">
                     </td>
+                    <td>{{ $photo->job ? $photo->job->title : 'N/A' }}</td>
                     <td>
                         <a href="{{ route('photos.edit', $photo->id) }}" class="btn btn-sm btn-warning">Edit</a>
                         <form action="{{ route('photos.destroy', $photo->id) }}" method="POST" style="display:inline-block;">
