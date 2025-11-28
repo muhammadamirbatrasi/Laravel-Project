@@ -1,8 +1,6 @@
 @extends('layouts.new_template') <!-- if you are using layouts -->
 
-@section('external_css')
-<link href="{{ asset('assets/css/style.css') }}" rel="stylesheet">
-@endsection
+
 
 @section('content')
 <!-- Main content -->

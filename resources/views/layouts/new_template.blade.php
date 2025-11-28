@@ -11,7 +11,7 @@
     <link href="{{ asset('assets/font-awesome/css/font-awesome.css') }}" rel="stylesheet">
     <!-- <link href="{{ asset('assets/css/plugins/iCheck/custom.css') }}" rel="stylesheet"> -->
     <!-- <link href="{{ asset('assets/css/animate.css') }}" rel="stylesheet"> -->
-    
+    <link href="{{ asset('assets/css/style.css') }}" rel="stylesheet">
     <!-- <link href="{{ asset('assets/css/plugins/awesome-bootstrap-checkbox/awesome-bootstrap-checkbox.css') }}" rel="stylesheet"> -->
     <!-- Page Specific CSS -->
     @yield('external_css')
