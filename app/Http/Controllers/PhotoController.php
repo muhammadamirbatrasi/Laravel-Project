@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Photo;
 use App\Models\Jobs;
+use App\Http\Requests\StorePhotoRequest;
+use App\Http\Requests\UpdatePhotoRequest;
+use App\Services\PhotoService;
 
 class PhotoController extends Controller
 {
@@ -23,32 +26,16 @@ class PhotoController extends Controller
     public function create()
     {
         $jobs = Jobs::where('is_deleted', 0)->get();
-        return view('photos.create',compact('jobs'));
+        return view('photos.create', compact('jobs'));
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
-    {
-        $request->validate([
-            'title' => 'required|string',
-            'image_name' => 'required|image|mimes:jpg,png,jpeg,gif,webp',
-            'job_id' => 'required|exists:jobs,id',
-        ]);
 
-        // Save photo
-        if ($request->hasFile('image_name')) {
-            $imageName = time() . '.' . $request->image_name->extension();
-            
-            $request->image_name->move(public_path('images'), $imageName);
-            Photo::create([
-                'title' => $request->title,
-                'image_name' => $imageName,
-                'job_id' => $request->job_id,
-                'added_date' => now(),
-            ]);
-        }
+    public function store(StorePhotoRequest $request, PhotoService $service)
+    {
+        $service->store($request->validated(), $request->file('image_name'));
 
         return redirect()->route('photos.index')->with('success', 'Photo Added Successfully!');
     }
@@ -67,48 +54,26 @@ class PhotoController extends Controller
     public function edit(Photo $photo)
     {
         $jobs = Jobs::where('is_deleted', 0)->get();
-        return view('photos.edit_photo', compact('photo','jobs'));
+        return view('photos.edit_photo', compact('photo', 'jobs'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Photo $photo)
+
+    public function update(UpdatePhotoRequest $request, Photo $photo, PhotoService $service)
     {
-        $request->validate([
-            'title' => 'required|string|max:255',
-            'image_name' => 'nullable|image|mimes:jpg,png,jpeg,gif,webp|max:2048',
-            'job_id' => 'required|exists:jobs,id',
-        ]);
-
-        if ($request->hasFile('image_name')) {
-            $imageName = time() . '.' . $request->image_name->extension();
-            $request->image_name->move(public_path('images'), $imageName);
-            $photo->image_name = $imageName;
-        }
-
-        $photo->title = $request->title;
-        $photo->job_id = $request->job_id;
-        $photo->save();
+        $service->update($photo, $request->validated(), $request->file('image_name'));
 
         return redirect()->route('photos.index')->with('success', 'Photo Updated Successfully!');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Photo $photo)
+
+
+    public function destroy(Photo $photo, PhotoService $service)
     {
-          if (file_exists(public_path('images/'.$photo->image_name))) {
-            unlink(public_path('images/'.$photo->image_name));
-        }
+        $service->delete($photo);
 
-       
-
-        // Option 1: Soft delete (is_deleted = 1)
-        $photo->update(['is_deleted' => 1, 'updated_date' => now()]);
-        
-        // $photo->delete();
         return redirect()->route('photos.index')->with('success', 'Photo Deleted Successfully!');
     }
 }

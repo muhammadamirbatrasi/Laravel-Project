@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Jobs;
+use App\Http\Requests\StoreJobRequest;
+use App\Http\Requests\UpdateJobRequest;
+use App\Services\JobService;
 
 class JobsController extends Controller
 {
@@ -13,38 +16,17 @@ class JobsController extends Controller
             ->where('is_deleted', 0)
             ->orderBy('id', 'desc')
             ->get();
-        return view('jobs.all_jobs',compact('jobs'));
+        return view('jobs.all_jobs', compact('jobs'));
     }
     public function add_job_form()
     {
         return view('jobs.add_job_form'); // form show view
     }
-    public function add_job(Request $request)
+    public function add_job(StoreJobRequest $request, JobService $service)
     {
-        $request->validate([
-            'title'       => 'required|string|unique:jobs,title',
-            'description' => 'nullable|string',
-            'location'    => 'nullable|string',
-            'last_date'   => 'nullable|date'
-        ]);
+        // Validation is handled automatically by StoreJobRequest
 
-        $exists = Jobs::where('title', $request->title)
-            ->where('is_deleted', 0)  // optional if you want active titles only
-            ->first();
-
-        if ($exists) {
-            return redirect()->back()->with('error', 'Job title already exists!');
-        }
-
-        Jobs::create([
-            'title'        => $request->title,
-            'description'  => $request->description,
-            'location'     => $request->location,
-            'last_date'    => $request->last_date,
-            'is_deleted'   => 0,
-            'added_date'   => now(),
-            'updated_date' => now(),
-        ]);
+        $service->createJob($request->validated());
 
         return redirect('/all_jobs')->with('success', 'Job Added Successfully!');
     }
@@ -55,45 +37,29 @@ class JobsController extends Controller
         return view('jobs.edit_job_form', compact('job'));
     }
 
-    public function update_job(Request $request, $id)
+    public function update_job(UpdateJobRequest $request, $id, JobService $service)
     {
-        // Validation
-        $request->validate([
-            'title'       => 'required|string|unique:jobs,title,' . $id,
-            'description' => 'required|string',
-            'location'    => 'nullable|string',
-            'last_date'   => 'nullable|date'
-        ]);
-
         // Find the job
         $job = Jobs::findOrFail($id);
 
-        // Update job
-        $job->update([
-            'title'        => $request->title,
-            'description'  => $request->description,
-            'location'     => $request->location,
-            'last_date'    => $request->last_date,
-            'updated_date' => now(),
-        ]);
+        // Validation is handled automatically by UpdateJobRequest
+
+        // Update job using service
+        $service->updateJob($job, $request->validated());
 
         // Redirect with success message
         return redirect('/all_jobs')->with('success', 'Job Updated Successfully!');
     }
 
-    public function delete_job($id)
+    public function delete_job($id, JobService $service)
     {
         // Find the job
         $job = Jobs::findOrFail($id);
 
-        // Option 1: Soft delete (is_deleted = 1)
-        $job->update(['is_deleted' => 1, 'updated_date' => now()]);
-
-        // Option 2: Permanent delete (uncomment if you want permanent)
-        // $job->delete();
+        // Delete using service (soft delete)
+        $service->deleteJob($job);
 
         // Redirect with success message
         return redirect('/all_jobs')->with('success', 'Job Deleted Successfully!');
     }
-
 }

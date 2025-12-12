@@ -1,0 +1,273 @@
+# Project Rules
+
+version: 1
+
+rules:
+
+######################################################################
+
+# SENIOR DEVELOPER MODE — GLOBAL BEHAVIOR
+
+######################################################################
+
+-   Always think and code like a senior engineer with 10+ years of experience.
+-   Always choose scalable, robust, maintainable architecture.
+-   Never choose shortcuts over long-term stability.
+-   Always explain important architectural decisions when needed.
+-   Avoid unnecessary complexity; follow clean code principles.
+-   Always write production-ready, secure, optimized code.
+
+######################################################################
+
+# GENERAL AI BEHAVIOR
+
+######################################################################
+
+-   Always write clean, maintainable, and production-ready code.
+-   Never write code with warnings, unused variables, or dead logic.
+-   Never guess; ask for clarification when requirements are unclear.
+-   Always optimize code readability and structure.
+-   Follow PSR-12 + Laravel conventions simultaneously.
+-   Always provide the best possible implementation, not the quickest.
+
+######################################################################
+
+# CODING STYLE — SPACING & FORMATTING
+
+######################################################################
+
+-   Follow PSR-12 spacing rules.
+-   Use 4 spaces for indentation, never tabs.
+-   Place one blank line between methods.
+-   No extra blank lines at start or end of files.
+-   Maintain consistent spacing around operators.
+-   Max line length ~120 characters.
+-   Opening braces on the same line.
+-   Use trailing commas in multi-line arrays.
+-   Avoid unnecessary vertical alignment.
+
+######################################################################
+
+# CODING STYLE — NAMING CONVENTIONS
+
+######################################################################
+
+-   Classes use PascalCase.
+-   Methods use camelCase.
+-   Variables use camelCase.
+-   camelCase means lowerCamelCase (e.g. $totalAmount).
+-   Private/protected properties use camelCase.
+-   Constants use UPPER_SNAKE_CASE.
+-   File names must exactly match class names.
+-   Request classes end with "Request".
+-   Services end with "Service".
+-   Repositories end with "Repository".
+-   Jobs end with "Job".
+-   Events end with "Event".
+-   Mailables end with "Mail".
+-   Controllers end with "Controller".
+
+######################################################################
+
+# ARCHITECTURE — GENERAL PRINCIPLES
+
+######################################################################
+
+-   Follow MVC strictly.
+-   Controllers must remain thin.
+-   Business logic must live in Services.
+-   Database logic beyond CRUD must live in Repositories.
+-   Always use Form Requests for validation.
+-   Use Resources for API responses.
+-   Never return raw models in APIs.
+-   Never place business logic in Controllers.
+-   Never put heavy logic inside Models.
+-   Use Events, Jobs, Observers, Policies properly.
+-   Prefer dependency injection over static calls.
+
+######################################################################
+
+# CONTROLLERS
+
+######################################################################
+
+-   Controller flow: Request → Service → Response.
+-   Never validate inside controllers.
+-   Never write DB logic inside controllers.
+-   Always type-hint dependencies.
+-   Use API Resources for output.
+-   Use folders like Admin/, Api/, Web/.
+
+######################################################################
+
+# MODELS
+
+#######################################################################
+
+-   Models contain only fillable/guarded, casts, relationships, scopes, accessors.
+-   No business logic.
+-   No application flow logic.
+-   Relationships must be explicit and clear.
+-   Use casts for arrays, JSON, dates, booleans.
+
+#######################################################################
+
+# SERVICES
+
+#######################################################################
+
+-   Services contain 100% of business logic.
+-   Must be single-responsibility.
+-   Should return Resources or DTOs for APIs.
+-   May call repositories.
+-   Should never depend on controllers.
+
+#######################################################################
+
+# REPOSITORIES
+
+#######################################################################
+
+-   Repositories encapsulate all database logic beyond simple CRUD.
+-   Methods must be descriptive.
+-   Never use DB queries outside repositories/services.
+-   No business logic inside repositories.
+
+#######################################################################
+
+# FORM REQUESTS / VALIDATION
+
+#######################################################################
+
+-   Always validate using Form Requests.
+-   Use authorize() properly.
+-   Validation rules must be clean and clear.
+-   Custom messages when needed.
+-   Never validate inside controllers.
+
+#######################################################################
+
+# API DEVELOPMENT
+
+#######################################################################
+
+-   Follow REST standards.
+-   Always return consistent JSON:
+    -   success
+    -   message
+    -   data
+    -   errors
+-   Use correct HTTP status codes.
+-   Use API Resources.
+-   Paginate listings.
+
+#######################################################################
+
+# ERROR HANDLING & SECURITY
+
+#######################################################################
+
+-   Never expose sensitive data.
+-   Wrap critical logic in try/catch.
+-   Use global exception handler.
+-   Validate all input thoroughly.
+-   Apply policies for authorization.
+-   Never trust client-side data.
+
+#######################################################################
+
+# DATABASE RULES
+
+#######################################################################
+
+-   Always use migrations.
+-   Use proper column types.
+-   Use soft deletes where suitable.
+-   Add indexes to frequently queried fields.
+-   Avoid raw SQL unless absolutely needed.
+-   Relationships must be well-defined.
+-   Never run complex queries in controllers.
+
+#######################################################################
+
+# JOBS & QUEUES
+
+#######################################################################
+
+-   Use Jobs for heavy tasks, imports, emails, async work.
+-   Jobs must be retry-safe and minimal.
+-   Never run heavy logic inside controllers.
+
+#######################################################################
+
+# EVENTS & OBSERVERS
+
+#######################################################################
+
+-   Use Events for decoupling workflows.
+-   Use Observers for model lifecycle logic.
+-   Never place event logic in controllers.
+
+#######################################################################
+
+# TESTING
+
+#######################################################################
+
+-   Write unit tests for services.
+-   Feature tests for API endpoints.
+-   Use factories.
+-   Tests must be isolated and independent.
+
+#######################################################################
+
+# FRONTEND / BLADE
+
+#######################################################################
+
+-   Use Blade components.
+-   Escape output unless intended.
+-   No heavy logic inside Blade.
+-   Avoid inline CSS.
+
+#######################################################################
+
+# LARAVEL PERFORMANCE OPTIMIZATION RULES
+
+#######################################################################
+
+-   Always eager load relations → avoid N+1.
+-   Use select() to fetch only needed columns.
+-   Index columns used for filtering/searching.
+-   Use chunking for large datasets.
+-   Cache heavy queries using cache()->remember().
+-   Use paginate() instead of get().
+-   Never load entire table into memory.
+-   Use Redis for caching, queue, session.
+-   Don’t run heavy logic inside blade or controllers.
+-   Use route:cache, config:cache, view:cache in production.
+-   Use Telescope/Debugbar for query inspection.
+
+#######################################################################
+
+# CURSOR EDITOR — OPTIMIZED BEHAVIOR
+
+#######################################################################
+
+-   Follow project folder structure.
+-   Use @file when editing.
+-   When asked for a file, produce full working file.
+-   Use short and clean suggestions for autocomplete.
+-   Default to production-ready code.
+
+#######################################################################
+
+# GENERATION RULES FOR CURSOR
+
+#######################################################################
+
+-   Never produce partial code unless requested.
+-   Always provide complete working files when asked.
+-   Modify only requested sections.
+-   Maintain original coding style.
+-   Use atomic commits for multi-file changes.
